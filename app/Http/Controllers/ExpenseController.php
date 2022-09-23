@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\ExpensesImport;
+use App\Models\Expense;
 use App\Services\ExpenseService;
 use App\Traits\Response;
 use Exception;
@@ -115,6 +116,24 @@ class ExpenseController extends Controller
 
         } catch (Exception $e) {
             return $this->fail(true, "Couldn't import expenses!", $e->getMessage(), 400);
+        }
+    }
+
+      public function sumExpensesToReimburse()
+    {
+        try {
+
+        
+             $expenses = Expense::where([
+                ['status', '!=', 'Reimburse'],
+            ])->get();
+
+             $expensesToReimburse =  round($expenses->sum('total_amount'),2);
+        
+        return $this->success(false, "Expenses to Reimburse !", $expensesToReimburse, 200);
+
+        } catch (Exception $e) {
+            return $this->fail(true, "Couldn't display expenses to reimburse!", $e->getMessage(), 400);
         }
     }
 
